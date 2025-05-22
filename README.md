@@ -13,6 +13,86 @@ A Chrome Extension that helps you manage your tabs more effectively by tracking 
 - Clean, modern user interface
 - Real-time tab tracking and analytics
 
+## Test Plan
+
+This test plan covers all major components and services of the Chrome Tab Manager extension. The goal is to achieve at least 95% code coverage and ensure all critical scenarios are tested.
+
+### 1. Popup Component (`src/popup/index.tsx`)
+- **UI Rendering**
+  - Renders the "Inactive" heading
+  - Renders the settings button
+  - Renders the "File Bugs" button
+  - Renders the empty state when there are no inactive tabs
+  - Renders a list of inactive tabs with correct details
+  - Renders the settings form and updates interval
+  - Renders the bug report button and opens the Google Form
+- **Tab Actions**
+  - Clicking "Close" removes a tab from the list
+  - Handles errors when closing a tab that no longer exists
+- **Settings**
+  - Opens the settings form
+  - Updates the inactive interval and reflects changes in the UI
+  - Cancels settings without saving
+- **Bug Reporting**
+  - Opens the Google Form in a new tab
+- **Time Formatting**
+  - Displays "Last accessed" in minutes, hours, or days as appropriate
+
+### 2. TabManagerService (`src/services/tabManager.ts`)
+- **Singleton**
+  - Only one instance is created
+- **Tab Tracking**
+  - Tracks a new tab and increments access count on activation
+  - Updates last accessed time correctly
+- **Inactive Tab Suggestions**
+  - Returns only tabs inactive for the configured interval
+  - Sorts tabs by most time inactive (descending)
+  - Handles edge cases (no tabs, all tabs active, etc.)
+- **Settings Integration**
+  - Uses the correct interval from storage
+- **Tab Closing**
+  - Removes tab data from storage when closed
+
+### 3. StorageService (`src/services/storage.ts`)
+- **Singleton**
+  - Only one instance is created
+- **Tab Info**
+  - Saves and retrieves tab info correctly
+  - Removes tab info correctly
+- **Tab Analytics**
+  - Saves and retrieves analytics correctly
+  - Removes analytics correctly
+
+### 4. Settings Component (`src/settings/index.tsx`)
+- **UI Rendering**
+  - Renders the settings form
+  - Loads current interval from storage
+- **Settings Actions**
+  - Updates and saves the interval
+  - Cancels without saving
+
+### 5. Background Script (`src/background/index.ts`)
+- **Tab Activation**
+  - Increments access count on tab activation
+- **Message Handling**
+  - Responds to GET_TAB_SUGGESTIONS and CLOSE_TAB messages
+
+### 6. Integration
+- **End-to-End**
+  - Changing the interval in settings updates the popup and service logic
+  - Closing a tab updates the popup and storage
+
+### 7. Edge Cases
+- No tabs open
+- All tabs are active
+- Storage errors
+- API errors (e.g., Chrome API unavailable)
+
+### Code Coverage
+- Aim for 95%+ coverage on all files, with a focus on:
+  - All branches in logic (e.g., time formatting, error handling)
+  - All user interactions (UI, settings, bug reporting)
+
 ## Project Structure
 
 ```
