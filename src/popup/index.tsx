@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { TabSuggestion } from '../types/tab';
 
 const DEFAULT_INACTIVE = 5;
+const BUG_FORM_URL = 'https://forms.gle/KPDzt3nD2N4M9N3W9';
 
 const Popup: React.FC = () => {
   const [suggestions, setSuggestions] = useState<TabSuggestion[]>([]);
@@ -106,8 +107,16 @@ const Popup: React.FC = () => {
   };
 
   const formatTimeSinceLastAccess = (minutes: number) => {
-    const roundedMinutes = Math.round(minutes);
-    return `${roundedMinutes} minute${roundedMinutes !== 1 ? 's' : ''} ago`;
+    if (minutes < 60) {
+      const rounded = Math.round(minutes);
+      return `${rounded} minute${rounded !== 1 ? 's' : ''} ago`;
+    } else if (minutes < 60 * 24) {
+      const hours = Math.round(minutes / 60);
+      return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    } else {
+      const days = Math.round(minutes / (60 * 24));
+      return `${days} day${days !== 1 ? 's' : ''} ago`;
+    }
   };
 
   // Settings form
@@ -152,13 +161,22 @@ const Popup: React.FC = () => {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
         <h3 style={{ margin: 0 }}>Inactive</h3>
-        <button
-          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18 }}
-          title="Settings"
-          onClick={() => setShowSettings(true)}
-        >
-          ⚙️
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18 }}
+            title="File Bugs"
+            onClick={() => window.open(BUG_FORM_URL, '_blank')}
+          >
+            🐞
+          </button>
+          <button
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18 }}
+            title="Settings"
+            onClick={() => setShowSettings(true)}
+          >
+            ⚙️
+          </button>
+        </div>
       </div>
       {showSettings ? (
         renderSettings()
